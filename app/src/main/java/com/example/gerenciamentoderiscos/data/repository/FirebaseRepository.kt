@@ -25,7 +25,6 @@ class FirebaseRepository {
 
     }
 
-    // Adiciona risco ao Firestore
     suspend fun addRisk(risk: Risk): Result<Unit> {
         return try {
             val riskMap = hashMapOf(
@@ -42,15 +41,30 @@ class FirebaseRepository {
         }
     }
 
-    // (Futuramente) buscar riscos
-    suspend fun getRisks(): List<Risk> {
+//    suspend fun getRisks(): List<Risk> {
+//        return try {
+//            val snapshot = risksCollection.get().await()
+//            snapshot.documents.mapNotNull { it.toObject(Risk::class.java)?.copy(id = it.id) }
+//        } catch (e: Exception) {
+//            emptyList()
+//        }
+//    }
+
+    suspend fun getRisksByType(riskType: String): List<Risk> {
         return try {
-            val snapshot = risksCollection.get().await()
-            snapshot.documents.mapNotNull { it.toObject(Risk::class.java)?.copy(id = it.id) }
+            val snapshot = risksCollection
+                .whereEqualTo("riskType", riskType)
+                .get()
+                .await()
+
+            snapshot.documents.mapNotNull { doc ->
+                doc.toObject(Risk::class.java)?.copy(id = doc.id)
+            }
         } catch (e: Exception) {
             emptyList()
         }
     }
+
 
 
 
