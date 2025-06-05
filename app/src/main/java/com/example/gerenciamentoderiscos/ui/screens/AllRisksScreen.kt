@@ -24,7 +24,6 @@ fun AllRisksScreen(navController: NavController) {
     var selectedStatus by remember { mutableStateOf("Todos") }
     val statusOptions = listOf("Todos", "Analise", "Aceito", "Recusado")
 
-    // Filtro com normalização (remove acentos, ignora caixa)
     val filteredRisks = if (selectedStatus == "Todos") {
         risks
     } else {
@@ -119,7 +118,6 @@ fun RiskCard(risk: Risk) {
     }
 }
 
-// Função para remover acentos e padronizar letras
 fun normalize(text: String): String {
     return Normalizer.normalize(text, Normalizer.Form.NFD)
         .replace("\\p{InCombiningDiacriticalMarks}+".toRegex(), "")
