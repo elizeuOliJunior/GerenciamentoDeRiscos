@@ -8,12 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.gerenciamentoderiscos.data.model.Risk
 import com.example.gerenciamentoderiscos.viewmodel.RiskManagerViewModel
 
 @Composable
-fun AllRisksScreen(viewModel: RiskManagerViewModel = RiskManagerViewModel()) {
+fun AllRisksScreen(navController: NavController, viewModel: RiskManagerViewModel = RiskManagerViewModel()) {
     val risks = viewModel.allRisks
     val loading = viewModel.isLoading
 

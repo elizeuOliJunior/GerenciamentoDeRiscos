@@ -13,10 +13,10 @@ fun AppNavigation() {
 
     NavHost(navController = navController, startDestination = "HomeScreen") {
         composable("HomeScreen") {
-            HomeScreen()
+            HomeScreen(navController = navController)
         }
         composable("AllRisksScreen") {
-            AllRisksScreen()
+            AllRisksScreen(navController = navController)
         }
     }
 }
