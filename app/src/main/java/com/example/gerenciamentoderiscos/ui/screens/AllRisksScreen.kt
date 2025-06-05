@@ -13,6 +13,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.gerenciamentoderiscos.data.model.Risk
 import com.example.gerenciamentoderiscos.viewmodel.RiskManagerViewModel
+import com.example.gerenciamentoderiscos.viewmodel.updateRisk
 import java.text.Normalizer
 
 @Composable
@@ -51,7 +52,7 @@ fun AllRisksScreen(navController: NavController) {
 
             LazyColumn {
                 items(filteredRisks) { risk ->
-                    RiskCard(risk)
+                    RiskCard(risk = risk)
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
@@ -67,26 +68,29 @@ fun StatusDropdown(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    Box(modifier = Modifier.fillMaxWidth()) {
-        OutlinedButton(
-            onClick = { expanded = true },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(selectedStatus)
-        }
+    Column {
+        Text("Filtrar por status:")
+        Box(modifier = Modifier.fillMaxWidth()) {
+            OutlinedButton(
+                onClick = { expanded = true },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(selectedStatus)
+            }
 
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            options.forEach { status ->
-                DropdownMenuItem(
-                    text = { Text(status) },
-                    onClick = {
-                        onStatusSelected(status)
-                        expanded = false
-                    }
-                )
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                options.forEach { status ->
+                    DropdownMenuItem(
+                        text = { Text(status) },
+                        onClick = {
+                            onStatusSelected(status)
+                            expanded = false
+                        }
+                    )
+                }
             }
         }
     }
@@ -94,6 +98,10 @@ fun StatusDropdown(
 
 @Composable
 fun RiskCard(risk: Risk) {
+    var expanded by remember { mutableStateOf(false) }
+    var selectedStatus by remember { mutableStateOf(risk.status) }
+    val statusOptions = listOf("Analise", "Aceito", "Recusado")
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -109,11 +117,45 @@ fun RiskCard(risk: Risk) {
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
-            Text("Status: ${risk.status}", style = MaterialTheme.typography.titleMedium)
+
+            Text("Status atual:")
+
+            Box {
+                OutlinedButton(onClick = { expanded = true }) {
+                    Text(selectedStatus)
+                }
+
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    statusOptions.forEach { status ->
+                        DropdownMenuItem(
+                            text = { Text(status) },
+                            onClick = {
+                                selectedStatus = status
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             Text("Tipo: ${risk.riskType}", style = MaterialTheme.typography.bodyMedium)
             Text("Data: ${risk.date}", style = MaterialTheme.typography.bodyMedium)
             Text("Endereço: ${risk.address}", style = MaterialTheme.typography.bodyMedium)
             Text("Descrição: ${risk.description}", style = MaterialTheme.typography.bodyMedium)
+
+            Button(
+                onClick = {
+                    updateRisk(risk.id, selectedStatus)
+                },
+                modifier = Modifier.align(Alignment.End)
+            ) {
+                Text("Salvar")
+            }
         }
     }
 }
