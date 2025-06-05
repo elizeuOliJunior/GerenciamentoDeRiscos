@@ -7,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -25,12 +26,12 @@ fun AllRisksScreen(navController: NavController) {
     var selectedStatus by remember { mutableStateOf("Todos") }
     val statusOptions = listOf("Todos", "Analise", "Aceito", "Recusado")
 
-    val filteredRisks = if (selectedStatus == "Todos") {
-        risks
-    } else {
-        risks.filter {
-            normalize(it.status) == normalize(selectedStatus)
-        }
+    var selectedRiskType by remember { mutableStateOf("Todos") }
+    val riskTypeOptions = listOf("Todos", "Biológico", "Químico", "Ergonômico", "Físico", "Mecânico")
+
+    val filteredRisks = risks.filter { risk ->
+        (selectedStatus == "Todos" || normalize(risk.status) == normalize(selectedStatus)) &&
+                (selectedRiskType == "Todos" || normalize(risk.riskType) == normalize(selectedRiskType))
     }
 
     if (loading) {
@@ -46,6 +47,14 @@ fun AllRisksScreen(navController: NavController) {
                 selectedStatus = selectedStatus,
                 options = statusOptions,
                 onStatusSelected = { newStatus -> selectedStatus = newStatus }
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            RiskTypeDropdown(
+                selectedType = selectedRiskType,
+                options = riskTypeOptions,
+                onTypeSelected = { newType -> selectedRiskType = newType }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -69,7 +78,7 @@ fun StatusDropdown(
     var expanded by remember { mutableStateOf(false) }
 
     Column {
-        Text("Filtrar por status:")
+        Text("Filtrar por status:",  color = Color.White)
         Box(modifier = Modifier.fillMaxWidth()) {
             OutlinedButton(
                 onClick = { expanded = true },
@@ -97,6 +106,42 @@ fun StatusDropdown(
 }
 
 @Composable
+fun RiskTypeDropdown(
+    selectedType: String,
+    options: List<String>,
+    onTypeSelected: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Column {
+        Text("Filtrar por tipo de risco:", color = Color.White)
+        Box(modifier = Modifier.fillMaxWidth()) {
+            OutlinedButton(
+                onClick = { expanded = true },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(selectedType)
+            }
+
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                options.forEach { type ->
+                    DropdownMenuItem(
+                        text = { Text(type) },
+                        onClick = {
+                            onTypeSelected(type)
+                            expanded = false
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun RiskCard(risk: Risk) {
     var expanded by remember { mutableStateOf(false) }
     var selectedStatus by remember { mutableStateOf(risk.status) }
@@ -106,7 +151,7 @@ fun RiskCard(risk: Risk) {
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(10.dp)) {
             risk.imageUrl?.let {
                 AsyncImage(
                     model = it,
