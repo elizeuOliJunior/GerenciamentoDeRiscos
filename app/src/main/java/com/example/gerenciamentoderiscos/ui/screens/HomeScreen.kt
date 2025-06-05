@@ -49,7 +49,7 @@ fun HomeScreen(navController: NavHostController) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = {navController.navigate("UserRisksScreen") },
+            onClick = { navController.navigate("RiskMapScreen") },
             modifier = Modifier.fillMaxWidth(0.8f),
             colors = ButtonDefaults.buttonColors(containerColor = primaryColor),
             shape = RoundedCornerShape(8.dp)

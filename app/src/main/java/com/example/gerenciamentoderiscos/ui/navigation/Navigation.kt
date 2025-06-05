@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.gerenciamentoderiscos.ui.screens.HomeScreen
 import com.example.gerenciamentoderiscos.ui.screens.AllRisksScreen
+import com.example.gerenciamentoderiscos.ui.screens.RiskMapScreen
 
 @Composable
 fun AppNavigation() {
@@ -18,5 +19,9 @@ fun AppNavigation() {
         composable("AllRisksScreen") {
             AllRisksScreen(navController = navController)
         }
+        composable("RiskMapScreen") {
+            RiskMapScreen()
+        }
+
     }
 }
